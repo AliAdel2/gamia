@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متابعة الصرف الشهري | خريطة الخير</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="خريطة الخير">
+<link rel="apple-touch-icon" href="icon-512.png">
+
+<meta name="theme-color" content="#2563eb">
+
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --white: #ffffff;
+            --primary-blue: #2563eb;
+            --primary-green: #10b981;
+            --danger-red: #ef4444;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-soft: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); padding-bottom: 50px; }
+        
+        .header {
+            background: var(--white);
+            padding: 30px 15px; border-radius: 0 0 30px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        /* زرار فلتر الشهر المودرن */
+        .month-indicator {
+            background: #f1f5f9; padding: 10px 20px;
+            border-radius: 15px; display: inline-block; margin-top: 15px;
+            border: 1px solid var(--border-soft); font-weight: 800; color: var(--primary-blue);
+            cursor: pointer; transition: 0.3s; position: relative;
+        }
+        .month-indicator:hover { background: var(--white); border-color: var(--primary-blue); }
+        
+        #month_picker {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat-item { 
+            background: var(--white); padding: 18px; border-radius: 20px; 
+            text-align: center; border: 1px solid var(--border-soft); 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .stat-item h3 { font-size: 24px; font-weight: 900; }
+        .stat-item p { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+
+        /* كارت الحالة */
+        .status-card {
+            background: var(--white); border-radius: 22px; padding: 18px;
+            margin-bottom: 15px; border: 1px solid var(--border-soft);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .status-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+
+        .status-paid { border-right: 5px solid var(--primary-green); }
+        .status-pending { border-right: 5px solid var(--danger-red); }
+
+        .indicator-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 10px; }
+        .dot-green { background: var(--primary-green); box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+        .dot-red { background: var(--danger-red); box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+
+        .manager-text { font-size: 11px; color: #b45309; font-weight: 700; margin-top: 6px; display: block; background: #fffbeb; padding: 2px 8px; border-radius: 6px; width: fit-content; }
+        .sub-text { font-size: 12px; color: var(--text-muted); display: block; margin-top: 4px; font-weight: 600; }
+
+        /* الأزرار داخل الكارت */
+        .btn-pay { 
+            background: var(--primary-green); color: #fff; border: none; 
+            padding: 10px 20px; border-radius: 12px; font-weight: 800; 
+            font-size: 13px; text-decoration: none; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+        .btn-view { 
+            background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-soft); 
+            padding: 10px; border-radius: 12px; font-size: 14px; margin-right: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-view:hover { background: var(--primary-blue); color: #fff; }
+        
+        .badge-paid {
+            background: #d1fae5; color: #065f46; font-size: 11px; font-weight: 800;
+            padding: 8px 15px; border-radius: 10px;
+        }
+
+        .loading-shimmer { opacity: 0.6; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h5 class="fw-900 m-0" style="color: var(--text-main);">كشف المساعدات الشهرية</h5>
+    <div class="month-indicator shadow-sm">
+        <span id="month_display">شهر: جاري التحميل...</span>
+        <i class="fas fa-calendar-alt ms-2"></i>
+        <input type="month" id="month_picker">
+    </div>
+</div>
+
+<div class="container mt-2">
+    <div class="stats-bar">
+        <div class="stat-item" style="color: var(--primary-green); border-bottom: 4px solid var(--primary-green);">
+            <h3 id="count_paid" class="mb-0">0</h3>
+            <p class="m-0">حالات صرفت</p>
+        </div>
+        <div class="stat-item" style="color: var(--danger-red); border-bottom: 4px solid var(--danger-red);">
+            <h3 id="count_pending" class="mb-0">0</h3>
+            <p class="m-0">في الانتظار</p>
+        </div>
+    </div>
+
+    <div id="monthly_list">
+        <div class="text-center py-5 opacity-50">
+            <div class="spinner-border text-primary spinner-border-sm mb-3"></div>
+            <p class="small">جاري تحديث السجلات...</p>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let activeMonthKey = new Date().toISOString().substring(0, 7); 
+
+    const updateDisplay = (key) => {
+        const dateObj = new Date(key + "-01");
+        document.getElementById('month_display').innerText = "شهر: " + dateObj.toLocaleString('ar-EG', { month: 'long', year: 'numeric' });
+    };
+
+    document.getElementById('month_picker').value = activeMonthKey;
+    updateDisplay(activeMonthKey);
+
+    document.getElementById('month_picker').addEventListener('change', (e) => {
+        activeMonthKey = e.target.value;
+        updateDisplay(activeMonthKey);
+        loadData();
+    });
+
+    function loadData() {
+        const list = document.getElementById('monthly_list');
+        list.innerHTML = '<div class="text-center py-5 loading-shimmer"><i class="fas fa-sync fa-spin fa-2xl mb-3 text-primary"></i><p>جاري المزامنة...</p></div>';
+
+        onSnapshot(collection(db, "beneficiaries"), (bSnap) => {
+            onSnapshot(collection(db, "transactions"), (tSnap) => {
+                
+                list.innerHTML = '';
+                let paidCount = 0;
+                let pendingCount = 0;
+
+                const paidIds = [];
+                tSnap.forEach(tDoc => {
+                    const t = tDoc.data();
+                    if (t.date && t.date.startsWith(activeMonthKey)) {
+                        paidIds.push(t.beneficiaryId);
+                    }
+                });
+
+                bSnap.forEach(doc => {
+                    const b = doc.data();
+                    const b_id = doc.id;
+
+                    if (b.disbursementType === "monthly") {
+                        const isPaid = paidIds.includes(b_id);
+                        if (isPaid) paidCount++; else pendingCount++;
+
+                        list.innerHTML += `
+                            <div class="status-card ${isPaid ? 'status-paid' : 'status-pending'} shadow-sm">
+                                <div class="info-area">
+                                    <div class="d-flex align-items-center">
+                                        <span class="indicator-dot ${isPaid ? 'dot-green' : 'dot-red'}"></span>
+                                        <h6 class="fw-bold m-0" style="font-size: 15px;">${b.fullName}</h6>
+                                    </div>
+                                    <span class="sub-text"><i class="far fa-id-card me-1"></i> ${b.nationalId || 'بدون رقم'}</span>
+                                    <span class="manager-text"><i class="fas fa-user-shield me-1"></i> ${b.caseManager || "بدون مسؤول"}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <a href="profile.html?id=${b_id}" class="btn-view" title="عرض الملف الشخصي"><i class="fas fa-eye"></i></a>
+                                    ${isPaid ? 
+                                        `<span class="badge-paid">صُرف <i class="fas fa-check-circle ms-1"></i></span>` : 
+                                        `<a href="disburse.html?id=${b_id}" class="btn-pay">صرف</a>`
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (list.innerHTML === '') {
+                    list.innerHTML = '<div class="text-center py-5 opacity-50">لا يوجد مستفيدين شهريين مسجلين.</div>';
+                }
+
+                document.getElementById('count_paid').innerText = paidCount;
+                document.getElementById('count_pending').innerText = pendingCount;
+            });
+        });
+    }
+
+    loadData();
+</script>
+</body>
+</html>
