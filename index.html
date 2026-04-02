@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحباً بك | خريطة الخير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #f59e0b;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #ffffff; display: flex; align-items: center;
+            justify-content: center; font-family: 'Cairo', sans-serif;
+            overflow: hidden;
+        }
+
+        .splash-container {
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .logo-img {
+            width: 180px; /* حجم اللوجو */
+            height: auto;
+            margin-bottom: 20px;
+            /* حركة نبض خفيفة للوجو */
+            animation: pulse 2s infinite;
+        }
+
+        .app-name {
+            font-size: 28px;
+            font-weight: 900;
+            color: #0069d9;
+            margin-bottom: 5px;
+        }
+
+        .slogan {
+            font-size: 16px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+          .slogan2 {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        /* أنيميشن التحميل */
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            margin: 30px auto;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .loader-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            position: absolute;
+            animation: load 2.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes load {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        .footer-text {
+            position: absolute;
+            bottom: 30px;
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="splash-container">
+        <img src="https://i.ibb.co/pBktZ11C/file-00000000367071fd9c324e97ce295972.png" id="mainLogo" class="logo-img" alt="خريطة الخير">
+        
+        <div class="app-name">خريطة الخير</div>
+  
+      <div class="slogan2">صدقة جارية عن </div>
+          <div class="slogan">الحاج عبده الجندى</div>
+            <div class="slogan">     والحاجة اسيا القاضى   </div>
+
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
+        </div>
+    </div>
+
+    <div class="footer-text">إصدار V 2.0 | نظام إدارة المساعدات</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+        // إعدادات الفايربيز بتاعتك
+        const firebaseConfig = {
+            apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+            authDomain: "masar-8dbce.firebaseapp.com",
+            projectId: "masar-8dbce",
+            storageBucket: "masar-8dbce.firebasestorage.app",
+            messagingSenderId: "201867140566",
+            appId: "1:201867140566:web:b21dd8f049276007ed1877"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // أهم جزء: الانتظار قليلاً ثم التحقق من المستخدم
+        setTimeout(() => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // لو مسجل دخول يروح للداشبورد
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // لو مش مسجل يروح لصفحة الدخول
+                    window.location.href = 'login.html';
+                }
+            });
+        }, 5000); // 3000 تعني 3 ثواني انتظار
+    </script>
+</body>
+</html>

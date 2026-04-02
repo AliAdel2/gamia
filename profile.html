@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ملف المستفيد | خريطة الخير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-body: #f1f5f9;
+            --white: #ffffff;
+            --primary-blue: #2563eb;
+            --primary-green: #10b981;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-soft: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        body { background: var(--bg-body); color: var(--text-main); padding-bottom: 30px; }
+        .container { padding: 14px; }
+        
+        /* HEADER SECTION - White & Clean */
+        .header {
+            background: var(--white);
+            text-align: center;
+            padding: 30px 15px;
+            border-radius: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-soft);
+            position: relative; /* مضافة لتموضع زر الحذف */
+        }
+
+        /* زر الحذف المضاف */
+        .delete-profile-btn {
+            position: absolute; top: 15px; left: 15px;
+            background: #fee2e2; color: #ef4444;
+            border: none; width: 35px; height: 35px; border-radius: 10px;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        }
+        .delete-profile-btn:hover { background: #ef4444; color: white; }
+
+        .user-icon {
+            width: 85px; height: 85px; 
+            background: linear-gradient(135deg, var(--primary-blue), #1d4ed8);
+            color: #fff; border-radius: 25px; display: flex;
+            align-items: center; justify-content: center; font-size: 35px;
+            margin: 0 auto 15px; 
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+        .name { font-size: 20px; font-weight: 900; color: var(--text-main); margin-bottom: 12px; }
+        
+        .info-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        .info-tag { 
+            font-size: 11px; font-weight: 700; color: var(--text-muted); 
+            background: #f8fafc; padding: 6px 12px; border-radius: 10px; 
+            border: 1px solid var(--border-soft);
+        }
+        .info-tag i { color: var(--primary-blue); margin-left: 5px; }
+
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .action-btn {
+            flex: 1; padding: 12px; border-radius: 15px; border: none;
+            font-weight: 800; font-size: 13px; cursor: pointer; transition: 0.3s;
+            text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-edit { background: var(--primary-green); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+        .btn-family { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-soft); }
+        .btn-edit:hover { background: #0d9488; transform: translateY(-2px); }
+
+        /* STATS - The "Mix" Look */
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .stat { 
+            background: var(--white); border-radius: 20px; padding: 15px; 
+            text-align: center; border: 1px solid var(--border-soft);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .stat h2 { font-size: 16px; color: var(--primary-blue); font-weight: 900; }
+        .stat p { font-size: 10px; color: var(--text-muted); margin-top: 4px; font-weight: 700; text-transform: uppercase; }
+        .stat.highlight h2 { color: var(--primary-green); }
+
+        /* HISTORY LIST */
+        .section-title { font-size: 14px; font-weight: 900; margin: 25px 5px 12px; color: var(--text-main); display: flex; align-items: center; }
+        .section-title i { margin-left: 8px; color: var(--primary-green); font-size: 18px; }
+        
+        .list-item {
+            background: var(--white); border-radius: 20px; padding: 18px;
+            margin-bottom: 12px; border: 1px solid var(--border-soft);
+            position: relative; overflow: hidden;
+        }
+        .list-item::after {
+            content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 4px; background: var(--primary-green);
+        }
+        .row-data { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; }
+        .row-data .label { color: var(--text-muted); font-weight: 600; }
+        .row-data .val { color: var(--text-main); font-weight: 700; }
+        
+        .amount-line { 
+            border-top: 1px dashed var(--border-soft); padding-top: 12px; margin-top: 12px; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .amount { font-size: 18px; font-weight: 900; color: var(--primary-green); }
+
+        /* FOOTER TOTAL - Fixed and Premium */
+        .footer-total {
+            background: var(--text-main);
+            color: #fff; text-align: center; font-size: 16px;
+            font-weight: 800; padding: 18px; border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            position: sticky; bottom: 15px; border: 2px solid var(--primary-green);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <button id="delete_p_btn" class="delete-profile-btn" title="حذف الملف نهائياً">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+
+        <div class="user-icon"><i class="fas fa-user-tie"></i></div>
+        <div class="name" id="p_name">جاري التحميل...</div>
+        
+        <div class="info-grid">
+            <span class="info-tag"><i class="fas fa-id-card"></i> <span id="p_nationalId">--</span></span>
+            <span class="info-tag"><i class="fas fa-tag"></i> <span id="p_category">--</span></span>
+            <span class="info-tag"><i class="fas fa-map-marker-alt"></i> <span id="p_address">--</span></span>
+            <span class="info-tag"><i class="fas fa-heart"></i> <span id="p_status">--</span></span>
+            <span class="info-tag"><i class="fas fa-calendar-check"></i> <span id="p_disbursement">--</span></span>
+        </div>
+
+        <div class="btn-group">
+            <button id="family_btn" class="action-btn btn-family"><i class="fas fa-users"></i> بيانات الأسرة</button>
+            <button id="edit_btn" class="action-btn btn-edit"><i class="fas fa-user-edit"></i> تعديل الملف</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat highlight"><h2 id="s_total">0</h2><p>إجمالي المساعدات</p></div>
+        <div class="stat"><h2 id="s_count">0</h2><p>عدد المرات</p></div>
+        <div class="stat"><h2 id="s_lastDate">--</h2><p>تاريخ آخر صرف</p></div>
+        <div class="stat"><h2 id="s_lastNote">--</h2><p>نوع آخر مساعدة</p></div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-history"></i> سجل العمليات الموثقة</div>
+    <div id="p_history_list">
+        <div class="text-center py-5 opacity-50">
+            <div class="spinner-border text-success spinner-border-sm"></div>
+            <p class="small mt-2">جاري استرجاع السجل التاريخي...</p>
+        </div>
+    </div>
+
+    <div class="footer-total" id="p_footer_total">
+        إجمالي المنصرف: 0 ج.م
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    // إضافة deleteDoc هنا
+    import { getFirestore, doc, getDoc, deleteDoc, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const b_id = urlParams.get('id');
+
+    if (b_id) {
+        // وظيفة زر الحذف المضافة
+        document.getElementById('delete_p_btn').onclick = async () => {
+            const confirmName = document.getElementById('p_name').innerText;
+            if (confirm(`هل أنت متأكد من حذف ملف (${confirmName}) نهائياً من النظام؟`)) {
+                try {
+                    await deleteDoc(doc(db, "beneficiaries", b_id));
+                    alert("تم حذف الملف بنجاح");
+                    window.location.href = "view.html";
+                } catch (e) { alert("خطأ في الحذف: " + e.message); }
+            }
+        };
+
+        document.getElementById('edit_btn').onclick = () => window.location.href = `input.html?id=${b_id}`;
+        document.getElementById('family_btn').onclick = () => window.location.href = `family.html?id=${b_id}`;
+
+        getDoc(doc(db, "beneficiaries", b_id)).then(s => {
+            if(s.exists()){
+                const d = s.data();
+                document.getElementById('p_name').innerText = d.fullName;
+                document.getElementById('p_nationalId').innerText = d.nationalId || 'بدون';
+                document.getElementById('p_category').innerText = d.category || 'عام';
+                document.getElementById('p_address').innerText = d.address || 'غير محدد';
+                document.getElementById('p_status').innerText = d.maritalStatus || 'غير محدد';
+                document.getElementById('p_disbursement').innerText = d.disbursementType || 'دائم';
+            }
+        });
+
+        const q = query(collection(db, "transactions"), where("beneficiaryId", "==", b_id));
+        onSnapshot(q, (snap) => {
+            const list = document.getElementById('p_history_list');
+            list.innerHTML = '';
+            let total = 0, count = 0, lastDate = '--', lastNote = '--';
+
+            if(snap.empty) {
+                list.innerHTML = '<div class="stat py-5 text-muted">لا يوجد سجل عمليات لهذه الحالة</div>';
+            }
+
+            const docs = [];
+            snap.forEach(d => docs.push(d.data()));
+            docs.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            docs.forEach((item, index) => {
+                total += parseFloat(item.amount || 0);
+                count++;
+                if(index === 0) { lastDate = item.date; lastNote = item.note || 'مالية'; }
+
+                list.innerHTML += `
+                    <div class="list-item">
+                        <div class="row-data"><span class="label">التاريخ</span><span class="val">${item.date}</span></div>
+                        <div class="row-data"><span class="label">البيان</span><span class="val">${item.note || 'مساعدة مالية'}</span></div>
+                        <div class="row-data"><span class="label">المسؤول</span><span class="val">${item.recordedBy || 'الجمعية'}</span></div>
+                        <div class="amount-line">
+                            <span class="label">القيمة</span>
+                            <span class="amount">${parseFloat(item.amount).toLocaleString()} ج.م</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('s_total').innerText = total.toLocaleString() + ' ج.م';
+            document.getElementById('s_count').innerText = count;
+            document.getElementById('s_lastDate').innerText = lastDate;
+            document.getElementById('s_lastNote').innerText = lastNote;
+            document.getElementById('p_footer_total').innerText = `إجمالي المنصرف: ${total.toLocaleString()} ج.م`;
+        });
+    } else { window.location.href = "view.html"; }
+</script>
+</body>
+</html>

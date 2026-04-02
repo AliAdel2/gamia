@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | خريطة الخير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-light: #f8fafc; 
+            --white: #ffffff;
+            --primary-blue: #2563eb; 
+            --success-green: #22c55e;
+            --danger-red: #ef4444;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+        
+        body { 
+            background: var(--bg-light); 
+            color: var(--text-dark); 
+            min-height: 100vh;
+            padding-bottom: 90px;
+        }
+
+        .container { max-width: 480px; margin: auto; padding: 10px; }
+
+        /* Header Mofified */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 10px 5px; }
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .header h1 { font-size: 20px; font-weight: 800; color: var(--text-dark); }
+        .header .logo-icon { color: var(--primary-blue); font-size: 24px; }
+        
+        /* زر الخروج */
+        .btn-logout {
+            background: #fee2e2; color: var(--danger-red);
+            border: none; padding: 8px 12px; border-radius: 12px;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 5px;
+        }
+        .btn-logout:active { transform: scale(0.9); }
+
+        .kpi-main {
+            background: linear-gradient(135deg, var(--primary-blue), #1d4ed8);
+            border-radius: 24px; padding: 25px; margin-bottom: 15px;
+            box-shadow: 0 15px 30px rgba(37, 99, 235, 0.2);
+            color: white; position: relative;
+        }
+        .kpi-main p { font-size: 13px; opacity: 0.9; margin-bottom: 5px; }
+        .kpi-main h2 { font-size: 32px; font-weight: 900; }
+
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .stat-card {
+            background: var(--white); border: 1px solid var(--border-light);
+            border-radius: 20px; padding: 18px; text-align: center; box-shadow: var(--shadow-sm);
+        }
+        .stat-card h3 { color: var(--success-green); font-size: 24px; font-weight: 800; margin-bottom: 2px; }
+        .stat-card span { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+
+        .section-header { font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 20px 5px 12px; }
+        .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .quick-item { 
+            background: var(--white); border-radius: 20px; padding: 18px 5px; text-align: center;
+            text-decoration: none; border: 1px solid var(--border-light); transition: 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+        .quick-item:active { transform: scale(0.95); background: #f1f5f9; }
+        .quick-item i { font-size: 22px; margin-bottom: 8px; display: block; }
+        .quick-item span { font-size: 11px; font-weight: 700; color: var(--text-dark); }
+
+        .blue-icon { color: var(--primary-blue); }
+        .green-icon { color: var(--success-green); }
+
+        .activity-card {
+            background: var(--white); border-radius: 24px; padding: 20px;
+            margin-top: 25px; border: 1px solid var(--border-light); box-shadow: var(--shadow-md);
+        }
+        .list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid #f1f5f9;
+        }
+        .list-item:last-child { border-bottom: none; }
+        .item-info h4 { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+        .item-info p { font-size: 11px; color: var(--text-muted); }
+        .item-amount { font-weight: 800; color: var(--success-green); font-size: 14px; }
+
+        .bottom-nav {
+            display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--white); border-top: 1px solid var(--border-light);
+            justify-content: space-around; padding: 12px 0; z-index: 1001;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+        }
+        .nav-item { text-align: center; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; }
+        .nav-item i { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+        .nav-item.active { color: var(--primary-blue); font-weight: bold; }
+
+        /* حماية الشاشة عند التحميل */
+        #auth-guard {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: white; z-index: 9999; display: flex;
+            align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="auth-guard">
+    <div class="text-center">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 fw-bold">جاري التحميل...</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <div class="header-right">
+            <i class="fas fa-hand-holding-heart logo-icon"></i>
+            <h1>خريطة الخير</h1>
+        </div>
+        <button class="btn-logout" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i> خروج
+        </button>
+    </div>
+
+    <div class="kpi-main">
+        <p>إجمالي المساعدات المصروفة</p>
+        <h2 id="total_amount">0 ج.م</h2>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card">
+            <h3 id="total_beneficiaries">0</h3>
+            <span>إجمالي المستفيدين</span>
+        </div>
+        <div class="stat-card">
+            <h3 id="new_beneficiaries">0</h3>
+            <span>المستفيدين الجدد</span>
+        </div>
+    </div>
+
+    <div class="section-header">الوصول السريع</div>
+    <div class="quick-grid">
+        <a href="input.html" class="quick-item"><i class="fas fa-plus-circle green-icon"></i><span>إضافة</span></a>
+        <a href="view.html" class="quick-item"><i class="fas fa-search blue-icon"></i><span>بحث</span></a>
+        <a href="report.html" class="quick-item"><i class="fas fa-file-invoice green-icon"></i><span>تقارير</span></a>
+        <a href="disburse.html" class="quick-item"><i class="fas fa-hand-holding-medical blue-icon"></i><span>إضافة مساعدات</span></a>
+        <a href="monthly-report.html" class="quick-item"><i class="fas fa-users-cog green-icon"></i><span> مساعدات شهرية</span></a>
+        <a href="medical-report.html" class="quick-item"><i class="fas fa-map-marked-alt blue-icon"></i><span>مساعدات علاجية</span></a>
+        <a href="seasonal-report.html" class="quick-item"><i class="fas fa-calendar-check green-icon"></i><span>مساعدات موسمية</span></a>
+        <a href="Emergency-report.html" class="quick-item"><i class="fas fa-bell blue-icon"></i><span>مساعدات الطارئة</span></a>
+        <a href="setting.html" class="quick-item"><i class="fas fa-sliders-h green-icon"></i><span>إعدادات</span></a>
+    </div>
+
+    <div class="activity-card">
+        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+            <span style="font-size:15px; font-weight:800;">آخر عمليات الصرف</span>
+            <a href="view.html" style="color:var(--primary-blue); font-size:12px; text-decoration:none; font-weight:700;">عرض الكل</a>
+        </div>
+        <div id="recent_list">
+            <div style="text-align:center; padding:20px; font-size:12px; color:var(--text-muted);">جاري المزامنة...</div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <a href="dashboard.html" class="nav-item active"><i class="fas fa-th-large"></i>الرئيسية</a>
+    <a href="view.html" class="nav-item"><i class="fas fa-users"></i>السجل</a>
+    <a href="input.html" class="nav-item"><i class="fas fa-user-plus"></i>إضافة</a>
+    <a href="disburse.html" class="nav-item"><i class="fas fa-wallet"></i>صرف</a>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCDMDK7RFxB-s9BuqszNgfst5Gr-kLTi8c",
+        authDomain: "masar-8dbce.firebaseapp.com",
+        projectId: "masar-8dbce",
+        storageBucket: "masar-8dbce.firebasestorage.app",
+        messagingSenderId: "201867140566",
+        appId: "1:201867140566:web:b21dd8f049276007ed1877"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // --- كود حماية الصفحة والتحقق من الجلسة ---
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            // لو مفيش مستفيد مسجل، يرجعه لصفحة تسجيل الدخول فوراً
+            window.location.href = 'login.html';
+        } else {
+            // لو تمام، يخفي شاشة التحميل ويظهر المحتوى
+            document.getElementById('auth-guard').style.display = 'none';
+        }
+    });
+
+    // --- كود تسجيل الخروج ---
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        if(confirm("هل تريد تسجيل الخروج؟")) {
+            signOut(auth).then(() => {
+                window.location.href = 'login.html';
+            });
+        }
+    });
+
+    // --- كود جلب البيانات من Firestore ---
+    onSnapshot(collection(db, "beneficiaries"), s => {
+        document.getElementById('total_beneficiaries').innerText = s.size;
+        document.getElementById('new_beneficiaries').innerText = Math.floor(s.size * 0.12);
+    });
+
+    onSnapshot(collection(db, "transactions"), (snap) => {
+        let total = 0;
+        const list = document.getElementById('recent_list');
+        list.innerHTML = '';
+        const data = [];
+        snap.forEach(doc => {
+            total += parseFloat(doc.data().amount || 0);
+            data.push(doc.data());
+        });
+        document.getElementById('total_amount').innerText = total.toLocaleString() + ' ج.م';
+        data.sort((a,b) => new Date(b.date) - new Date(a.date));
+        data.slice(0, 3).forEach(item => {
+            list.innerHTML += `
+                <div class="list-item">
+                    <div class="item-info">
+                        <h4>${item.beneficiaryName}</h4>
+                        <p>${item.date}</p>
+                    </div>
+                    <div class="item-amount">+${parseFloat(item.amount).toLocaleString()}</div>
+                </div>
+            `;
+        });
+    });
+</script>
+</body>
+</html>
